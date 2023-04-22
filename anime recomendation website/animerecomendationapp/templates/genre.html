@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+	<link rel="stylesheet" href="{{ url_for('static', filename='genre_style.css')}}">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Press+Start+2P&display=swap" rel="stylesheet">
+	<title>Anime Recomendation</title>
+</head>
+<body>
+	<nav>
+		<a class="logo" href="/">AniRec</a>
+		<a href="/keyword">Keyword</a>
+		<a href="/genre">Genre</a>
+		<a href="/rated">Rated</a>
+	</nav>
+	<div class="Body_container">
+		
+		<div class="header">
+			<h1>AniRec</h1>
+			<h3>Anime Recomendations</h3>
+		</div>
+
+		<div class="serch_box">
+			<form class="form_input" method="POST">
+				<div class="choices">
+					<div class="choice1 choice_box">	
+						Action <input type="checkbox" name="mycheckbox" value="Action">
+					</div>
+	
+					<div class="choice2 choice_box">	
+						Adventure <input type="checkbox" name="mycheckbox" value="Adventure">
+					</div>
+	
+					<div class="choice3 choice_box">	
+						Cars <input type="checkbox" name="mycheckbox" value="Cars">
+					</div>
+	
+					<div class="choice4 choice_box">	
+						Comedy <input type="checkbox" name="mycheckbox" value="Comedy">
+					</div>
+	
+					<div class="choice5 choice_box">	
+						Dementia <input type="checkbox" name="mycheckbox" value="Dementia">
+					</div>
+	
+					<div class="choice6 choice_box">	
+						Demons <input type="checkbox" name="mycheckbox" value="Demons">
+					</div>
+	
+					<div class="choice7 choice_box">	
+						Drama <input type="checkbox" name="mycheckbox" value="Drama">
+					</div>
+	
+					<div class="choice8 choice_box">	
+						Ecchi <input type="checkbox" name="mycheckbox" value="Ecchi">
+					</div>
+	
+					<div class="choice9 choice_box">	
+						Fantasy <input type="checkbox" name="mycheckbox" value="Fantasy">
+					</div>
+	
+					<div class="choice10 choice_box">	
+						Game <input type="checkbox" name="mycheckbox" value="Game">
+					</div>
+	
+					<div class="choice11 choice_box">	
+						Harem <input type="checkbox" name="mycheckbox" value="Harem">
+					</div>
+	
+					<div class="choice12 choice_box">	
+						Hentai <input type="checkbox" name="mycheckbox" value="Hentai">
+					</div>
+	
+					<div class="choice13 choice_box">	
+						Historical <input type="checkbox" name="mycheckbox" value="Historical">
+					</div>
+	
+					<div class="choice14 choice_box">	
+						Horror <input type="checkbox" name="mycheckbox" value="Horror">
+					</div>
+	
+					<div class="choice15 choice_box">	
+						Josei <input type="checkbox" name="mycheckbox" value="Josei">
+					</div>
+	
+					<div class="choice17 choice_box">	
+						Magic <input type="checkbox" name="mycheckbox" value="Magic">
+					</div>
+	
+					<div class="choice18 choice_box">	
+						Martial Arts <input type="checkbox" name="mycheckbox" value="Martial Arts">
+					</div>
+	
+					<div class="choice19 choice_box">	
+						Mecha <input type="checkbox" name="mycheckbox" value="Mecha">
+					</div>
+	
+					<div class="choice20 choice_box">	
+						Military <input type="checkbox" name="mycheckbox" value="Military">
+					</div>
+	
+					<div class="choice21 choice_box">	
+						Music <input type="checkbox" name="mycheckbox" value="Music">
+					</div>
+	
+					<div class="choice22 choice_box">	
+						Mystery <input type="checkbox" name="mycheckbox" value="Mystery">
+					</div>
+	
+					<div class="choice23 choice_box">	
+						Parody <input type="checkbox" name="mycheckbox" value="Parody">
+					</div>
+	
+					<div class="choice24 choice_box">	
+						Police <input type="checkbox" name="mycheckbox" value="Police">
+					</div>
+	
+					<div class="choice25 choice_box">	
+						Psychological <input type="checkbox" name="mycheckbox" value="Psychological">
+					</div>
+	
+					<div class="choice26 choice_box">	
+						Romance <input type="checkbox" name="mycheckbox" value="Romance">
+					</div>
+	
+					<div class="choice27 choice_box">	
+						Samurai <input type="checkbox" name="mycheckbox" value="Samurai">
+					</div>
+	
+					<div class="choice28 choice_box">	
+						School <input type="checkbox" name="mycheckbox" value="School">
+					</div>
+	
+					<div class="choice29 choice_box">	
+						Sci-Fi <input type="checkbox" name="mycheckbox" value="Sci-Fi">
+					</div>
+	
+					<div class="choice30 choice_box">	
+						Seinen <input type="checkbox" name="mycheckbox" value="Seinen">
+					</div>
+	
+					<div class="choice31 choice_box">	
+						Shoujo <input type="checkbox" name="mycheckbox" value="Shoujo">
+					</div>
+	
+					<div class="choice32 choice_box">	
+						Shoujo Ai <input type="checkbox" name="mycheckbox" value="Shoujo Ai">
+					</div>
+	
+					<div class="choice33 choice_box">	
+						Shounen <input type="checkbox" name="mycheckbox" value="Shounen">
+					</div>
+	
+					<div class="choice34 choice_box">	
+						Shounen Ai <input type="checkbox" name="mycheckbox" value="Shounen Ai">
+					</div>
+	
+					<div class="choice35 choice_box">	
+						Slice of Life <input type="checkbox" name="mycheckbox" value="Slice of Life">
+					</div>
+	
+					<div class="choice36 choice_box">	
+						Space <input type="checkbox" name="mycheckbox" value="Space">
+					</div>
+	
+					<div class="choice37 choice_box">	
+						Sports <input type="checkbox" name="mycheckbox" value="Sports">
+					</div>
+	
+					<div class="choice38 choice_box">	
+						Super Power <input type="checkbox" name="mycheckbox" value="Super Power">
+					</div>
+	
+					<div class="choice39 choice_box">	
+						Supernatural <input type="checkbox" name="mycheckbox" value="Supernatural">
+					</div>
+	
+					<div class="choice40 choice_box">	
+						Thriller <input type="checkbox" name="mycheckbox" value="Thriller">
+					</div>
+	
+					<div class="choice41 choice_box">	
+						Vampire <input type="checkbox" name="mycheckbox" value="Vampire">
+					</div>
+	
+					<div class="choice42 choice_box">	
+						Yaoi <input type="checkbox" name="mycheckbox" value="Yaoi">
+					</div>
+	
+					<div class="choice43 choice_box">	
+						Yuri <input type="checkbox" name="mycheckbox" value="Yuri">
+					</div>					
+				</div>
+
+				<input class="button submit" type="submit" name="submit">
+			</form>		
+		</div>
+		<div class="test">
+			<p>{{data}}</p>
+		</div>
+	</div>
+
+
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='script.js')}}"></script>
+	<script type="text/javascript">
+		$(document).on('mousemove',function(e){
+			$('.light').css({
+				left: e.pageX - 300,
+				top: e.pageY - 300
+			})
+		})
+	</script>
+	<script type="text/javascript">
+		particlesJS.load('particles-js', "{{ url_for('static', filename='particlesjs-config.json')}}", function() {
+		  console.log('callback - particles.js config loaded');
+		});
+	</script>
+</body>
+</html>
