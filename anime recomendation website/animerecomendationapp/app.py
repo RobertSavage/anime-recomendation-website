@@ -4,39 +4,69 @@ import ast
 import random
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from nltk.tokenize import word_tokenize
-import nltk
 import re
 import stopwords
 from operator import itemgetter
-#from nltk.corpus import wordnet
-import os
+import numpy as np
+from nltk.corpus import wordnet
+import nltk
+import ssl
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import auth
 
-#nltk.download(download_dir='C:/Users/edwar/Documents/Python/FLASK APPS/anime recomendation website')
-#
-#nltk.data.path.append(os.getcwd()+'\\corpora\\wordnet')
+# Replace 'path/to/serviceAccountKey.json' with the actual path to your service account key file
+cred = credentials.Certificate('serviceKey.json')
+firebase_admin.initialize_app(cred)
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
+
 
 app = Flask(__name__)
 
 
 #-------- HOME PAGE DATA --------
 line_count = 0
-homepage_imgs = []
+homepage = []
+shounen = []
+romance = []
+comedy = []
 
 with open('anime_data.csv', newline='', encoding='UTF-8') as f:
 	reader = csv.reader(f)
 	for line in reader:
 		try:
 			new = ast.literal_eval(line[5])
+			rating = float(line[2])
 		except:
-			print(line)
-		if 'Hentai' not in new and new != [] and 'Kids' not in new and 'Ecchi' not in new:
-			homepage_imgs.append(line)
+			new = ['none']
+			rating = 5
+		if 'Hentai' not in new and new != [] and 'Kids' not in new and 'Ecchi' not in new and rating >= 6.9:
+			homepage.append(line)
 			line_count += 1
+		if 'Hentai' not in new and new != [] and 'Kids' not in new and 'Ecchi' not in new and rating >= 6.0 and 'Shounen' in new:
+			shounen.append(line)
+			line_count += 1
+		if 'Hentai' not in new and new != [] and 'Kids' not in new and 'Ecchi' not in new and rating >= 6.0 and 'Romance' in new:
+			romance.append(line)
+			line_count += 1
+		if 'Hentai' not in new and new != [] and 'Kids' not in new and 'Ecchi' not in new and rating >= 6.0 and 'Comedy' in new:
+			comedy.append(line)
+			line_count += 1
+##--------------------------------
+
 
 
 ##--------------------------------
-#-------- GENRE PAGE DATA --------
+#-------- DATA --------
 data_list = []
 
 with open('anime_data.csv', newline='', encoding='UTF-8') as f:
@@ -44,201 +74,114 @@ with open('anime_data.csv', newline='', encoding='UTF-8') as f:
 	for line in reader:
 		try:
 			new = ast.literal_eval(line[5])
+			if new != [] and 'Hentai' not in new and 'Kids' not in new:		
+				data_list.append(line)	
 		except:
-			print(line)
-		if new != [] and 'Kids' not in new:		
-			data_list.append(line)
+			pass	
 
-##--------------------------------
-
-
-
-@app.route('/')
-def index():
-	homepage_img_1= homepage_imgs[ random.randint(0,len(homepage_imgs)-1) ]
-	homepage_img_2= homepage_imgs[ random.randint(0,len(homepage_imgs)-1) ]
-	homepage_img_3= homepage_imgs[ random.randint(0,len(homepage_imgs)-1) ]
-	homepage_img_4= homepage_imgs[ random.randint(0,len(homepage_imgs)-1) ]
-	homepage_img_5= homepage_imgs[ random.randint(0,len(homepage_imgs)-1) ]
-	return render_template('main.html', homepage_img_1= homepage_img_1,
-										homepage_img_2= homepage_img_2,
-										homepage_img_3= homepage_img_3,
-										homepage_img_4= homepage_img_4,
-										homepage_img_5= homepage_img_5)
+#getting anime descriptions
+print("Data Length: ",len(data_list))
+anime_description = []
+for line in data_list:
+	try:
+		anime_description.append(line[3]+" "+line[1])
+	except:
+		pass
 
 
-@app.route('/genre', methods=['GET','POST'])
-def genre():
-	if request.method == 'POST':
-		print(request.form.get('submit'))
-		print(request.form.get('load_more'))
-		if request.form.get('submit') == 'Submit':
-			recived_list = []
-			for line in data_list:
-				try:
-					new = ast.literal_eval(line[5])
-					check = set(request.form.getlist('mycheckbox')).issubset(new)
-					if check is True and len(new) > 0:
-						recived_list.append(line)
-				except IndexError:
-					pass
-			if len(recived_list) == 0:
-				recived_list = [['','','','','','']]
-
-			return render_template('genre_post_render.html', data1 = recived_list[ random.randint(0,len(recived_list)-1) ],
-															data2 = recived_list[ random.randint(0,len(recived_list)-1) ],
-															data3 = recived_list[ random.randint(0,len(recived_list)-1) ],
-															data4 = recived_list[ random.randint(0,len(recived_list)-1) ],
-															data5 = recived_list[ random.randint(0,len(recived_list)-1) ])
-
-			
-				
-	return render_template('genre.html')
-
-
-
-
-@app.route('/rated', methods=['GET','POST'])
-def rated():
-	if request.method == 'POST':
-		recived_list = []
-		for line in data_list:
-			try:
-				score = line[2]
-				if request.form.get('sectionselect') == "higher":
-					if int(request.form.get('inputform')) == 10 and float(request.form.get('inputform'))-0.99 <= float(score):
-						recived_list.append(line)
-					elif request.form.get('inputform') <= score:
-						recived_list.append(line)
-					else:
-						pass
-				elif request.form.get('sectionselect') == "lower":
-					if request.form.get('inputform') >= score:
-						recived_list.append(line)
-					elif int(request.form.get('inputform')) == 1 and float(request.form.get('inputform'))+0.99 <= float(score):
-						recived_list.append(line)
-					else:
-						pass
-				elif request.form.get('sectionselect') == "equal":
-					if int(request.form.get('inputform')) == 10 and float(request.form.get('inputform'))-0.9 <= float(score):
-						recived_list.append(line)
-					elif float(request.form.get('inputform'))-0.5 <= float(score) and float(request.form.get('inputform'))+0.5 >= float(score):
-						recived_list.append(line)
-					else:
-						pass
-				else:
-					recived_list.append(['','','','','','','',''])
-			except:
-				pass
-			len_recived_data = len(recived_list)
-		return render_template('rated_post_render.html', data1 = recived_list[ random.randint(0,len(recived_list)-1) ],
-														data2 = recived_list[ random.randint(0,len(recived_list)-1) ],
-														data3 = recived_list[ random.randint(0,len(recived_list)-1) ],
-														data4 = recived_list[ random.randint(0,len(recived_list)-1) ],
-														data5 = recived_list[ random.randint(0,len(recived_list)-1) ])
+#fuction to remove stop words
+def filter_words(sent):
+	stopword_list = stopwords.stopwords
+	puncuation_removed = re.sub(r'[^\w\s]','',sent)
+	splint_sentence = puncuation_removed.split(' ')
+	new_sentence = []
 	
-	return render_template('Rated.html')
+	for word in splint_sentence:
+		if word not in stopword_list:
+			new_sentence.append(word)
+			#try:
+			#	if(wordnet.synsets(word).name().split('.', 1)[1] == "n"):
+			#		for syn in wordnet.synsets(word):
+			#			for i in syn.lemmas():
+			#				new_sentence.append(i.name())
+			#except:
+			#	pass
 
+	return ' '.join(new_sentence)
 
-@app.route('/keyword', methods=['GET','POST'])
-def keyword():
+print("Cleaning Data")
+cleaned_description_list = []
+for des in anime_description:
+	cleaned_description_list.append(filter_words(des))
+
+print("Vectorizing Data")
+#vectorize and tokenize
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(cleaned_description_list)
+##--------------------------------
+print("App ready!")
+
+@app.route('/', methods=['GET','POST'])
+def index():
+
 	if request.method == 'POST':
 
 		#getting form data
 		user_description = request.form.get('inputform')
-		user_description = [str(user_description)]
-		print(user_description)
 
-		#getting anime descriptions
-		anime_description = []
-		for line in data_list:
-			try:
-				anime_description.append(line[3]+" "+line[1])
-			except:
-				pass
-		merger_list = user_description + anime_description
-		
-		#fuction to remove stop words
-		def filter_words(sent):
-			stopword_list = stopwords.stopwords
-			puncuation_removed = re.sub(r'[^\w\s]','',sent)
-			splint_sentence = puncuation_removed.split(' ')
-			new_sentence = []
-			for word in splint_sentence:
-				if word not in stopword_list:
-					new_sentence.append(word)
-			return ' '.join(new_sentence)
+		#Get filtered user description
+		user_description = filter_words(user_description)
 
-		cleaned_description_list = []
-		for des in merger_list:
-			cleaned_description_list.append(filter_words(des))
+		#This vectorizes the users entry
+		Y = vectorizer.transform([user_description])
 
-		#vectorize and tokenize
-		vectorizer = TfidfVectorizer()
-		X = vectorizer.fit_transform(cleaned_description_list)
-
-		#determin threshhold
-		similarities = [cosine_similarity(X[0],X[i])[0][0] for i in range(len(merger_list)) if cosine_similarity(X[0],X[i])[0][0] < 1.0]
+		#Get similarity
+		similarities = [cosine_similarity(Y[0],X[i])[0][0] for i in range(len(cleaned_description_list))]
 		thresh = max(similarities) * 0.25
-		print('thresh: ',thresh)
+
 		#check similarity between user sentence and anime descriptions
 		index_count = 0
 		index = []
 		for i in similarities:
 			if i >= thresh:
 				index.append([index_count, i])
+			if i == max(similarities):
+				print(data_list[index_count])
 			index_count += 1
-		index = sorted(index, key=itemgetter(1))
-		print('len index: ',len(index))
-		
 
-		if len(index) == 0:
-			data1 = ['','','','','','','','']
-			data2 = ['','','','','','','','']
-			data3 = ['','','','','','','','']
-			data4 = ['','','','','','','','']
-			data5 = ['','','','','','','','']
-		elif len(index) == 1:
-			data1 =	data_list[index[0][0]]
-			data2 = ['','','','','','','','']
-			data3 = ['','','','','','','','']
-			data4 = ['','','','','','','','']
-			data5 = ['','','','','','','','']
-		elif len(index) == 2:
-			data1 =	data_list[index[0][0]]
-			data2 =	data_list[index[1][0]]
-			data3 = ['','','','','','','','']
-			data4 = ['','','','','','','','']
-			data5 = ['','','','','','','','']
-		elif len(index) == 3:
-			data1 =	data_list[index[0][0]]
-			data2 =	data_list[index[1][0]]
-			data3 =	data_list[index[2][0]]
-			data4 = ['','','','','','','','']
-			data5 = ['','','','','','','','']
-		elif len(index) == 4:
-			data1 =	data_list[index[0][0]]
-			data2 =	data_list[index[1][0]]
-			data3 =	data_list[index[2][0]]
-			data4 =	data_list[index[3][0]]
-			data5 = ['','','','','','','','']
-		elif len(index) >= 5:
-			data1 =	data_list[index[0][0]]
-			data2 =	data_list[index[1][0]]
-			data3 =	data_list[index[2][0]]
-			data4 =	data_list[index[3][0]]
-			data5 =	data_list[index[4][0]]
-		else:
-			data1 = ['','','','','','','','']
-			data2 = ['','','','','','','','']
-			data3 = ['','','','','','','','']
-			data4 = ['','','','','','','','']
-			data5 = ['','','','','','','','']		
-		return render_template('keyword_post_render.html',data1 = data1,
-														data2 = data2,
-														data3 = data3,
-														data4 = data4,
-														data5 = data5)
+		#Sort the data list
+		index = sorted(index, key=itemgetter(1))
+		index = [data_list[i[0]] for i in index]
+
+		#this is for the HTML
+		dataLength = 25
+		if len(index) < 25:
+			dataLength = len(index)
+		
+		return render_template('main.html', homepage_recs = homepage, 
+										homepage_shounen = shounen,
+										homepage_romance = romance,
+										homepage_comedy = comedy,
+										data1 = index,
+										dataLength = dataLength, 
+										loadedRecs = True)
+	random.shuffle(homepage)
+	random.shuffle(shounen)
+	random.shuffle(romance)
+	random.shuffle(comedy)
+	return render_template('main.html', homepage_recs = homepage, 
+										homepage_shounen = shounen,
+										homepage_romance = romance,
+										homepage_comedy = comedy,
+										loadedRecs = False)
+
+
+
+
+
+@app.route('/keyword', methods=['GET','POST'])
+def keyword():
+
 	return render_template('keyword.html')
 	
 

@@ -11,30 +11,144 @@
 	<title>Anime Recomendation</title>
 </head>
 <body>
-	<nav>
-		<a class="logo" href="/">AniRec</a>
-		<a href="/keyword">Keyword</a>
-		<a href="/genre">Genre</a>
-		<a href="/rated">Rated</a>
-	</nav>
 
 	<div class="site-wrapper">
 
-		
+		<section class="navifation_container">
+			<nav>
+				<h2 class="nav_name"></h2>
+			</nav>
+		</section>
 
-		<div class="headerSection">
-			<h1 class="headerText">Fullmetal Alchemist: Brotherhood</h1>
-
-			<p class="description">After a horrific alchemy experiment goes wrong in the Elric household, brothers Edward and Alphonse are left in a catastrophic new reality. Ignoring the alchemical principle banning human transmutation, the boys attempted to bring their recently deceased mother back to life. Instead, they suffered brutal personal loss: Alphonse's body disintegrated while Edward lost a leg and then sacrificed an arm to keep Alphonse's soul in the physical realm by binding it to a hulking suit of armor.</p>
-
-			<a class="button1" href="https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood">View</a>
+		<section class="heroSection">
+			<a href="/" style="text-decoration: none;">
+				<h1 class="heroSectionHeader">OtakuRec</h1><br>
+			</a>
+			<form class="keyWordSearch" method="POST">
+				<input name="inputform" type="text" class="textBox" placeholder="What type of anime are you looking for?"><br>
+				<input type="submit" value="Submit" class="submitButton" onclick=myFunction() style="cursor: pointer;"><br>
+			</form>
 			
-		</div>
+
+			<div class="set">
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}"></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+			  </div>
+			  <div class="set set2">
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+			  </div>
+			  <div class="set set3">
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves1.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves2.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves3.png')}}">></div>
+				<div><img src="{{ url_for('static', filename='leaves4.png')}}">></div>
+			  </div>
+		</section>
+		{% if loadedRecs == False %}
+			<section class="recomendationsShounen" id="homeSection">
+				<h1 class="topPicksHeader">Top Picks</h1>
+				<div class="topPicks">
+					{% for row in range(25) %}
+					<div class="topPicksCard card">
+						<a target="_blank" rel="noopener noreferrer" href="{{homepage_recs[row][4]}}">
+							<img src="{{homepage_recs[row][0]}}">
+						</a>
+						
+					</div>
+					{% endfor %}
+				</div>
+			</section>
 
 
+			<section class="recomendationsShounen" id="homeSection">
+				<h1 class="shounenHeader">Shounen</h1>
+				<div class="shounen">
+					{% for row in range(25) %}
+					<div class="shounenCard card">
+						<a target="_blank" rel="noopener noreferrer" href="{{homepage_shounen[row][4]}}">
+							<img src="{{homepage_shounen[row][0]}}">
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+			</section>
+
+			<section class="recomendationsShounen" id="homeSection">
+				<h1 class="shounenHeader">Comedy</h1>
+				<div class="shounen">
+					{% for row in range(25) %}
+					<div class="shounenCard card">
+						<a target="_blank" rel="noopener noreferrer" href="{{homepage_comedy[row][4]}}">
+							<img src="{{homepage_comedy[row][0]}}" href="{{homepage_comedy[row][4]}}">
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+			</section>
+
+			<section class="recomendationsShounen" id="homeSection">
+				<h1 class="shounenHeader">Romance</h1>
+				<div class="shounen">
+					{% for row in range(25) %}
+					<div class="shounenCard card">
+						<a target="_blank" rel="noopener noreferrer" href="{{homepage_romance[row][4]}}">
+							<img src="{{homepage_romance[row][0]}}" href="{{homepage_romance[row][4]}}">
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+			</section>
+        
+		{% else %}
+			<section class="keywordSearch" id="homeSection">
+				<h1 class="resultsDataHeader">Results</h1>
+				<div class="resultsData">
+					{% for row in range(dataLength) %}
+					<div class="resultsDataCard cardData">
+						<a target="_blank" rel="noopener noreferrer" href="{{data1[row][4]}}">
+							<img src="{{data1[row][0]}}" href="{{data1[row][4]}}">
+						</a>
+					</div>
+					{% endfor %}
+				</div>
+			</section>
+			
+		{% endif %}
 
 
 	</div>
+
+	<script>
+		var x = document.getElementsByClassName("keywordSearch");
+		x.style.display = "none"
+		function myFunction() {
+		    var x = document.getElementsByClassName("recomendationsShounen");
+			var y = document.getElementsByClassName("keywordSearch");
+			for(var i = 0; i < x.length; i++) {
+				if (x[i].style.display != "none") {
+					x[i].style.display = "none";
+					x[i].style.display = "block";
+				}
+			}
+		  }
+	</script>
 
 
 </body>
